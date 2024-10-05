@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebGameV1.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<style>
+    .icon-container {
+        display: none;
+        margin-left: 5px;
+    }
+
+    .nav-link:hover .icon-container {
+        display: inline;
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark ">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    @* Retrieve the currently logged-in user *@
+                    var currentUser = await UserManager.GetUserAsync(User);
+
+                    <li class="nav-item">
+                        <a id="manage" class="nav-link  text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Quản lý">
+                            Xin chào @currentUser.Name!
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <form id="logoutForm" class="d-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button id="logout" type="submit" class="nav-link text-dark btn btn-link border-0">
+                                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">
+                            Đăng ký
+                            <span class="icon-container">
+                                <i class="fas fa-user-plus"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">
+                            Đăng nhập
+                            <span class="icon-container">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+
+

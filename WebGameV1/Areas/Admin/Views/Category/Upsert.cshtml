@@ -1,0 +1,73 @@
+﻿@model WebGameV1.Models.Category
+
+<div class="container">
+    <div class="row justify-content-center  min-vh-100">
+        <div class="col-md-8 col-lg-6">
+            <form method="post" asp-controller="Category" asp-action="Upsert">
+                <div class="border rounded p-4 mt-4 shadow-sm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                    <div class="row pb-2 text-center">
+                        <h2>@(Model.CategoryID == 0 ? "Tạo mới" : "Cập nhật") Loại game</h2>
+                    </div>
+
+                    <input type="hidden" asp-for="CategoryID" id="categoryId" />
+
+                    <div class="mb-3">
+                        <label asp-for="CategoryName" class="form-label"></label>
+                        <input asp-for="CategoryName" class="form-control" required id="categoryName" />
+                        <span asp-validation-for="CategoryName" class="text-danger" id="cateExistsMessage"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="bi bi-save"></i> @(Model.CategoryID == 0 ? "Create" : "Update")
+                        </button>
+                        <a asp-controller="Category" asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back To List
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        window.onload = function () {
+            var categoryId = document.getElementById("categoryId");
+
+            if (categoryId.value) {
+                categoryId.setAttribute("readonly", "readonly");
+            }
+        };
+
+        $(document).ready(function () {
+            $("#categoryName").on('blur', function () {
+                var name = $("#categoryName").val();
+                var id = $("#categoryId").val();
+
+                $.ajax({
+                    url: '/api/admin/categories',
+                    type: 'GET',
+                    success: function (response) {
+                        var cateExists = response.data.some(cate => cate.categoryName.toLowerCase() === name.toLowerCase() && cate.categoryId != id);
+
+                        if (cateExists) {
+                            $("#cateExistsMessage").text("Loại sản phẩm đã tồn tại.").css("color", "red");
+                            $("#submitBtn").prop("disabled", true);
+                        } else {
+                            $("#cateExistsMessage").text("");
+                            $("#submitBtn").prop("disabled", false);
+                        }
+                    },
+                    error: function () {
+                        $("#cateExistsMessage").text("Lỗi khi kiểm tra tên loại sản phẩm.").css("color", "red");
+                    }
+                });
+            });
+        });
+    </script>
+}

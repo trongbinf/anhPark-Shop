@@ -1,0 +1,166 @@
+﻿@model WebGameV1.Models.ViewModel.ProductVM
+
+<div class="container">
+    <div class="row justify-content-center min-vh-100">
+        <div class="col-md-8 col-lg-6">
+            <form method="post" asp-action="Upsert" enctype="multipart/form-data">
+                <div class="border p-3 mt-4">
+                    <div class="row pb-2 text-center">
+                        <h2>@(Model.product.ProductID == 0 ? "Tạo" : "Cập nhật") Sản phẩm</h2>
+                    </div>
+
+                    <!-- Hidden field for Id -->
+                    <input type="hidden" asp-for="product.ProductID" id="productID" />
+
+                    <!-- Product Info -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="product.ProductTitle">Tên sản phẩm</label>
+                            <input asp-for="product.ProductTitle" class="form-control" id="productName" />
+                            <span asp-validation-for="product.ProductTitle" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="product.CategoryID">Loại game</label>
+                            <select asp-for="product.CategoryID" asp-items="Model.CategoryList" class="form-control">
+                                <option value="">-- Chọn Loại game --</option>
+                            </select>
+                            <span asp-validation-for="product.CategoryID" class="text-danger"></span>
+                        </div>
+                      
+                       
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="product.Username">Tài khoản</label>
+                            <input asp-for="product.Username" class="form-control" id="userName"/>
+                            <span asp-validation-for="product.Username" class="text-danger" id="usernameExits"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="product.Password">Mật khẩu</label>
+                            <input asp-for="product.Password" class="form-control" type="text" />
+                            <span asp-validation-for="product.Password" class="text-danger"></span>
+                        </div>
+                       
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="product.Discount">Giảm giá</label>
+                            <input asp-for="product.Discount" class="form-control" type="number" />
+                            <span asp-validation-for="product.Discount" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="product.Price">Giá tiền</label>
+                            <input asp-for="product.Price" class="form-control" type="number" />
+                            <span asp-validation-for="product.Price" class="text-danger"></span>
+                        </div>
+                    </div>
+             
+                    <!-- File Upload for Detail Images -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="MainImageUrl">Ảnh hiển thị</label>
+                            <input type="file" asp-for="MainImage" class="form-control" />
+                            <span asp-validation-for="product.MainImageUrl" class="text-danger"></span>
+                        </div>
+                       
+                        <div class="col-md-6 mb-3">
+                            <label for="DetailImages">Ảnh chi tiết</label>
+                            <input type="file" asp-for="DetailImages" class="form-control" multiple />
+                            <span asp-validation-for="DetailImages" class="text-danger"></span>
+                        </div>
+                       
+                    </div>
+
+                 
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="product.Description">Mô tả</label>
+                        <textarea asp-for="product.Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="product.Description" class="text-danger"></span>
+                    </div>                
+
+                  
+
+                    <!-- Submit and Back Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-12 d-flex justify-content-between">
+                            <button type="submit" onclick="return ValidateInput()" class="btn btn-primary" id="submitBtn">
+                                @(Model.product.ProductID == 0 ? "Create" : "Update")
+                            </button>
+                            <a asp-controller="Product" asp-action="Index" class="btn btn-secondary">Back to list</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function ValidateInput() {
+            let fileInputs = document.querySelectorAll('input[type="file"]');
+            let productId = $("#productID").val();
+            let valid = true;
+
+            
+            if (productId == 0) {
+                fileInputs.forEach(input => {
+                    if (input.files.length === 0) {
+                        valid = false;
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi...",
+                            text: "Vui lòng upload hình ảnh!",
+                        });
+                    }
+                });
+            }
+
+            return valid;
+        }
+
+
+        $(document).ready(function () {
+            $("#userName").on('blur', function () {
+                var name = $("#userName").val();
+                var id = $("#productID").val();
+
+                $.ajax({
+                    url: '/api/admin/products',
+                    type: 'GET',
+                    success: function (response) {
+                        var usernameExists = response.data.some(cate => cate.username.toLowerCase() === name.toLowerCase() && cate.productID != id);
+
+                        if (usernameExists) {
+                            $("#usernameExits").text("Tài khoản đã tồn tại.").css("color", "red");
+                            $("#submitBtn").prop("disabled", true);
+                        } else {
+                            $("#usernameExits").text("");
+                            $("#submitBtn").prop("disabled", false);
+                        }
+                    },
+                    error: function () {
+                        $("#usernameExits").text("Lỗi khi kiểm tra tên tài khoản.").css("color", "red");
+                    }
+                });
+            });
+        });
+
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+        });
+    </script>
+}

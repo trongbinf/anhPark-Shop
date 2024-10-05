@@ -1,0 +1,322 @@
+﻿@model WebGameV1.Models.ViewModel.ProductVM
+
+<style>
+    .img-f {
+        object-fit: cover;
+        border-radius: 8px;
+        width: 300px;
+        height: 200px;
+        margin-bottom: 10px;
+    }
+
+    .breadcrumb {
+        font-size: 1.1rem;
+      
+    }
+
+
+    .img-main {
+        width: 90%;
+        max-height: 580px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .detail-image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-gap: 15px;
+    }
+
+
+    .block-promotion, .block-policy {
+        background-color: #f8f9fa; 
+        border: 1px solid #dee2e6; 
+        border-radius: 8px; 
+        padding: 15px; 
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    }
+
+    .heading-promo, .heading-policy {
+        font-size: 1.5rem; 
+        color: #343a40;
+        margin-bottom: 15px; 
+        text-align: center; 
+    }
+
+    .promo-content, .policy-content {
+        font-size: 1rem; 
+        color: #495057; 
+        line-height: 1.5;
+    }
+
+   .promotion-text {
+        color : red;
+    }
+
+    .policy-item {
+        display: flex; 
+        align-items: center; 
+        margin-bottom: 15px; 
+        padding: 10px; 
+        background-color: #ffffff; 
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+      
+
+        .policy-item img {
+            margin-right: 10px;
+        }
+
+        .policy-item h5 {
+            margin: 0; 
+            font-size: 1.1rem; 
+        }
+
+        .policy-item span {
+            font-size: 0.9rem; 
+            color: #6c757d; 
+        }
+
+    .new-price-container {
+        display: flex;
+        align-items: center;    
+        margin: 10px 0; /* Margin for spacing */
+        font-weight: bold; /* Bold font for emphasis */
+    }
+
+    .new-price {
+        color: red; /* New price color */
+        font-size: 26px; /* Font size for the new price */
+        margin-right: 10px; /* Space between new price and discount */
+    }
+
+
+      .discount {
+        background-color: #ff4d4d;
+        color: white;
+        border-radius: 50%; 
+        padding: 5px 10px; 
+        font-weight: bold;
+        display: inline-block; 
+        min-width: 30px; 
+
+       }
+
+
+    .btn-buy {
+        background-color: white; /* White background */
+        color: #d32f2f; /* Red text */
+        font-size: 18px;
+        padding: 20px 40px;
+        border-radius: 12px; /* Rounded corners */
+        border: 2px solid #d32f2f; /* Red border */
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        display: inline-block;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+        cursor: pointer;
+    }
+
+    .btn-buy:hover {
+        color:red;
+        background-color: #ffe6e6; /* Light red on hover */
+        transform: translateY(-2px); /* Lift effect on hover */
+    }
+
+
+
+.btn-contact-zalo {
+    background-color: white; /* White background */
+    color: #d32f2f; /* Red text */
+    font-size: 18px;
+    padding: 12px 24px;
+    border-radius: 12px; /* Rounded corners */
+    border: 2px solid #d32f2f; /* Red border */
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-contact-zalo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular Zalo icon */
+}
+
+.btn-contact-zalo:hover {
+    background-color: #ffe6e6; /* Light red on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+    color: red;
+}
+
+/* Button shadows */
+.btn-buy, .btn-contact-zalo {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow for both buttons */
+    cursor: pointer;
+}
+
+
+
+    
+
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <nav class="mb-3" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a asp-area="Public" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a asp-area="Public" asp-controller="Home" asp-action="Index">@Model.product.Category.CategoryName</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.product.ProductTitle</li>
+            </ol>
+        </nav>
+        <div class="row">
+            <!-- Left: Product Image -->
+            <div class="col-md-4 mt-4">
+           
+                @if (!string.IsNullOrEmpty(Model.product.MainImageUrl))
+                {
+                    <img src="~/@Model.product.MainImageUrl" alt="Hình ảnh chính" class="img-main" />
+                }
+                else
+                {
+                    <p>Không có hình ảnh chính.</p>
+                }
+            </div>
+
+            <!-- Right: Product Description and Information -->
+            <div class="col-md-4 mt-4">
+               
+                <h3 class="card-title">@Model.product.ProductTitle</h3>
+         
+                <p class="card-text">@Html.Raw(@Model.product.Description)</p>   
+               
+                <p class="card-text"><strong>» Game:</strong> @Model.product.Category.CategoryName</p> 
+                <p class="card-text">
+                    <strong>» Trạng thái:</strong>
+                    @if (Model.product.Status == "unavailable")
+                    {
+                        <span style="color: red;">Hết hàng</span>
+                    }
+                    else
+                    {
+                        <span style="color: green;">Còn hàng</span>
+                    }
+                </p>
+                <hr class="hr-style" />
+                <div class="row" style="display: flex; justify-content: space-between; align-items: center; ">
+
+                    @if (Model.product.Discount > 0)
+                    {
+                        <span class="old-price" style="text-decoration: line-through; font-size: 18px; font-weight:600; color: #888">
+                            @Model.product.GetFormattedOriginalPrice()
+                        </span>
+                           
+    
+                    }
+                      
+                   
+                    <div class="new-price-container">
+                        <span class="new-price">
+                            @Model.product.GetFormattedDiscountedPrice()
+                        </span>
+
+                        @if (Model.product.Discount >0)
+                        {
+                            <span class="discount">- @((Model.product.Discount.HasValue ? (Model.product.Discount.Value * 100).ToString("0") : "0") + "%")</span>
+                        }
+                    </div>
+
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-danger btn-buy ">
+                        Mua Ngay
+                    </button>
+                    <a href="http://zaloapp.com/0968736913" target="_blank" class="btn btn-primary btn-contact-zalo">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" alt="Zalo" width="20" height="20" style="vertical-align: middle;" />
+                        Liên Hệ Zalo
+                    </a>
+                </div>
+
+               
+
+                <div class="rte mt-4">
+                    <p>
+                        ✔️Có số điện thoại » <b>Hỗ trợ đổi sđt liền cho người mua</b>
+                        <br />
+                        <i style="color: #f00;">+ Lưu ý: Nhắn tin ở Chat Web/Zalo để được hỗ trợ thay đổi thông tin và bảo mật tránh mất acc. Để thời gian quá lâu không liên hệ, shop không hỗ trợ được ạ. (Xin chú ý).</i>
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 bo">
+                <div class="block-promotion">
+                    <h4 class="heading-promo">Lưu ý trước khi mua</h4>
+                    <div class="promo-content">
+                        <p>
+                            <strong class="promotion-text">GIAO DỊCH DUY NHẤT</strong><br />
+                            +&nbsp;&nbsp;MB Bank (MB).<br />
+                            +&nbsp;&nbsp;STK: 123456789<br />
+                            +&nbsp;&nbsp;Tên chủ: NGUYEN VAN A <br />
+                            <i>&nbsp;&nbsp;&nbsp;(tên thật của anhPark)</i>
+                        </p>
+                        <p>
+                            - <strong class="promotion-text">MIỄN PHÍ</strong> thay đổi thông tin khi mua acc.<br />
+                            - <strong class="promotion-text">KHÔNG</strong> phát sinh thêm chi phí.<br />
+                            - <strong class="promotion-text">KHÔNG</strong> giao dịch qua <strong class="promotion-text" style="text-decoration: line-through">FACEBOOK</strong>.<br />
+                            - <strong class="promotion-text">CỌC GIỮ ACC</strong> từ 30%-50% giá trị acc.<br />
+                            - <strong class="promotion-text">MUA GÓP</strong> đưa trước từ 50%-70%.<br />
+                            - <strong class="promotion-text">LƯU Ý:</strong> Cọc giữ acc và mua góp chỉ áp dụng giá acc 500K trở lên.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="block-policy">
+                    <h4 class="heading-policy">Chính sách hỗ trợ</h4>
+                    <div class="policy-content row">
+                        <div class="col-lg-12">
+                            <div class="policy-item">
+                                <img width="50" height="50" src="https://lightlauriel.com/img/icon-home/product_1.svg" alt="Hỗ trợ đổi thông tin" />
+                                <div>
+                                    <h5>Hỗ trợ đổi thông tin</h5>
+                                    <span>Áp dụng acc mua tại shop</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="policy-item">
+                                <img width="50" height="50" src="https://lightlauriel.com/img/icon-home/product_2.svg" alt="Mua acc tặng quà" />
+                                <div>
+                                    <h5>Mua acc tặng quà</h5>
+                                    <span>Tặng lượt quay nhận quà may mắn</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="policy-item">
+                                <img width="50" height="50" src="https://lightlauriel.com/img/icon-home/product_4.svg" alt="Hỗ trợ Zalo" />
+                                <div>
+                                    <h5>Zalo: <a title="Liên hệ Zalo" target="_blank" href="http://zaloapp.com/0968736913">0968 736 913</a></h5>
+                                    <span>Hỗ trợ: 8H-23H (T2-CN, cả ngày lễ)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 

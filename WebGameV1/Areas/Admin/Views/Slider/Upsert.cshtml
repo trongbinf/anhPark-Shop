@@ -1,0 +1,127 @@
+﻿@model WebGameV1.Models.ViewModel.SliderVM
+
+<div class="container">
+    <div class="row justify-content-center min-vh-100">
+        <div class="col-md-8 col-lg-6">
+            <form method="post" asp-action="Upsert" enctype="multipart/form-data">
+                <div class="border p-3 mt-4">
+                    <div class="row pb-2 text-center">
+                        <h2>@(Model.slider.Id == 0 ? "Tạo" : "Cập nhật") Slider</h2>
+                    </div>
+
+                    <!-- Hidden field for Id -->
+                    <input type="hidden" asp-for="slider.Id" id="sliderId" />
+
+                    <!-- Slider Title -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="slider.Title">Tên slider</label>
+                            <input asp-for="slider.Title" class="form-control" id="slider-title"/>
+                            <span asp-validation-for="slider.Title" class="text-danger" id="sliderExits"></span>
+                        </div>
+                    </div>
+
+                
+                    <!-- Link URL -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="slider.LinkUrl">Liên kết URL</label>
+                            <input asp-for="slider.LinkUrl" class="form-control" />
+                            <span asp-validation-for="slider.LinkUrl" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- File Upload for Image -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="ImageUrl">Tải lên ảnh</label>
+                            <input type="file" asp-for="ImageUrl" class="form-control" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Start Date and End Date -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="slider.StartDate">Ngày bắt đầu</label>
+                            <input asp-for="slider.StartDate" class="form-control" type="date" />
+                            <span asp-validation-for="slider.StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="slider.EndDate">Ngày kết thúc</label>
+                            <input asp-for="slider.EndDate" class="form-control" type="date" />
+                            <span asp-validation-for="slider.EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Submit and Back Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-12 d-flex justify-content-between">
+                            <button type="submit" onclick="return ValidateInput()" class="btn btn-primary" id="submitBtn">
+                                @(Model.slider.Id == 0 ? "Create" : "Update")
+                            </button>
+                            <a asp-controller="Slider" asp-action="Index" class="btn btn-secondary">Back to list</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+  
+    <script>
+        function ValidateInput() {
+            let fileInputs = document.querySelectorAll('input[type="file"]');
+            let sliderId = $("#sliderId").val();
+            let valid = true;
+
+
+            if (sliderId == 0) {
+                fileInputs.forEach(input => {
+                    if (input.files.length === 0) {
+                        valid = false;
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi...",
+                            text: "Vui lòng upload hình ảnh!",
+                        });
+                    }
+                });
+            }
+
+            return valid;
+        }
+        $(document).ready(function () {
+            $("#slider-title").on('blur', function () {
+                var name = $("#slider-title").val();
+                var id = $("#sliderId").val();
+
+                $.ajax({
+                    url: '/api/admin/sliders',
+                    type: 'GET',
+                    success: function (response) {
+
+                        var titleExists = response.data.some(slider =>
+                            slider.title.toLowerCase() === name.toLowerCase() && slider.id != id
+                        );
+
+                        if (titleExists) {
+                            $("#sliderExits").text("Tên tiêu đề đã tồn tại.").css("color", "red");
+                            $("#submitBtn").prop("disabled", true); 
+                        } else {
+                            $("#sliderExits").text("");
+                            $("#submitBtn").prop("disabled", false); 
+                        }
+                    },
+                    error: function () {
+                        $("#sliderExits").text("Lỗi khi kiểm tra tên tiêu đề.").css("color", "red");
+                    }
+                });
+            });
+        });
+
+    </script>
+}

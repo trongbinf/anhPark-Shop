@@ -1,0 +1,173 @@
+﻿@model IEnumerable<WebGameV1.Models.Slider>
+
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/assets/css/data-tables/data-tables.css" />
+</head>
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h4>Danh sách slider </h4>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Slider" asp-action="Upsert" class="btn btn-primary"><i class="fas fa-plus"></i> Import Slider</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped mt-3" id="tblData">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tiêu đề</th>
+                <th>Thời gian bắt đầu</th>
+                <th>Thời gian kết thúc </th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <partial name="_Notification" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/vendors/data-tables/data-tables.js"></script>
+    <script>
+        var dataTable;
+
+        $(document).ready(function () {
+            loadDatatable();
+        });
+
+        function loadDatatable() {
+            dataTable = $('#tblData').DataTable({
+                "ajax": {
+                    "url": "/api/admin/sliders",
+                    "type": "GET",
+                    "dataSrc": function (json) {
+                        console.log('API Response:', json);
+                        return json.data;
+                    }
+                },
+
+                "columns": [
+                    {
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            return meta.row + 1;
+                        },
+                        "width": "5%"
+                    },
+                    {
+                        "data": "title",
+                        "render": function (data, type, row) {
+                            return `<a href="/Admin/Slider/Detail?id=${row.id}" class="text-decoration-none">${data}</a>`;
+                        },
+                        "width": "10%"
+                    },
+                    { "data": "startDate", "width": "15%" },
+                    { "data": "endDate", "width": "10%" },
+                    {
+                        "data": "status",
+                        "render": function (data, type, row) {
+                            if (data.toLowerCase() === 'unavailable') {
+                                return `<span style="color: red;">Không hiển thị</span>`;
+                            } else {
+                                return `<span style="color: green;">Hiển thị</span>`;
+                            }
+                        },
+                        "width": "10%"
+                    },                
+                    {
+                        "data": "id",
+                        "render": function (data, type, row) {
+                            var isShow = row.status === 'available';
+                            return `
+                                        <div>
+                                            <a href="/Admin/Slider/Upsert?id=${data}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <a href="javascript:void(0)"
+                                                        onclick="Show('/api/admin/sliders/status?id=${data}&status=available')"
+                                                class="btn btn-success btn-sm ${isShow ? 'disabled' : ''}">
+                                                <i class="far fa-eye"></i> Show
+                                            </a>
+                                            <a href="javascript:void(0)"
+                                                        onclick="Hide('/api/admin/sliders/status?id=${data}&status=unavailable')"
+                                                class="btn btn-danger btn-sm ${!isShow ? 'disabled' : ''}">
+                                                <i class="far fa-eye-slash"></i> Hide
+                                            </a>
+                                        </div>`;
+                        },
+                        "width": "16%"
+                    }
+                ]
+            });
+        }
+
+
+        function Hide(url) {
+            Swal.fire({
+                title: "Bạn có chắc không?",
+                text: "Hành động này sẽ ẩn slider !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Có, ẩn nó!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {
+                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                toastr.success(data.message);
+                                dataTable.ajax.reload();
+                            } else {
+                                toastr.error(data.message);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+
+        function Show(url) {
+            Swal.fire({
+                title: "Bạn có chắc không?",
+                text: "Hành động này sẽ hiển thị slider !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Có, ẩn nó!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {
+                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                toastr.success(data.message);
+                                dataTable.ajax.reload();
+                            } else {
+                                toastr.error(data.message);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+    </script>
+}

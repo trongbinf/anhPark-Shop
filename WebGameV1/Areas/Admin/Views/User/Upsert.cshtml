@@ -1,0 +1,176 @@
+﻿@model WebGameV1.Models.ViewModel.UserVM
+
+
+<div class="container">
+    <div class="row justify-content-center min-vh-100 ">
+        <div class="col-md-8 col-lg-6">
+            <form method="post" asp-controller="User" asp-action="Upsert">
+                <div class="border p-3 mt-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="row pb-2 text-center">
+                        <h2>@(string.IsNullOrEmpty(Model.user.Email) ? "Tạo" : "Cập nhật") Tài khoản người dùng</h2>
+                    </div>
+
+                    <!-- Hidden field for Id -->
+                    <input type="hidden" asp-for="user.Id" id="userId" />
+
+                    <!-- User Info -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="user.Email">Email</label>
+                            <input asp-for="user.Email" class="form-control" id="emailField" type="email" required
+                                   data-val="true" data-val-email="Vui lòng nhập đúng định dạng email" />
+                            <span asp-validation-for="user.Email" class="text-danger" id="userExistsMessage"></span>
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="user.Name">Tên Hiển Thị</label>
+                            <input asp-for="user.Name" class="form-control" />
+                            <span asp-validation-for="user.Name" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @if (string.IsNullOrEmpty(Model.user.Email))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password">Mật Khẩu</label>
+                                <input asp-for="Password" type="password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Show checkbox to update password if updating an existing user -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="updatePasswordCheck" name="UpdatePassword" value="true" />
+                            <label class="form-check-label" for="updatePasswordCheck">
+                                Cập nhật mật khẩu?
+                            </label>
+                        </div>
+
+                        <div class="row mb-3" id="formPassword">
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password">Mật Khẩu</label>
+                                <input asp-for="Password" type="password" class="form-control" id="password"  value="666666" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" id="cpassword" value="666666" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                    }
+                                   
+                    <!-- Role Selection -->
+                    <div class="row mb-3">
+                        <div class="col-md-12 mb-3">
+                            <label>Vai trò</label>
+                            <div>
+                                @foreach (var role in Model.RoleList)
+                                {
+                                    <div class="form-check">
+                                        <input type="radio"
+                                               name="SelectedRoleIds"
+                                               value="@role.Value"                            
+                                               class="form-check-input"
+                                        @(Model.SelectedRoleIds.Contains(role.Value)
+                                            ? "checked"
+                                            : (!Model.SelectedRoleIds.Any() && role.Text == "Customer" ? "checked" : "")) />
+                                        <label class="form-check-label" for="role_@role.Value">@role.Text</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                 
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            
+                            @if (string.IsNullOrEmpty(Model.user.Email))
+                            {
+                                <button type="submit" class="btn btn-primary w-100" id="submitBtn">Create</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-primary w-100" id="submitBtn">Update</button>
+                            }
+                            <a asp-controller="User" asp-action="Index" class="btn btn-secondary mt-2 w-100">Back To List</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+   
+   
+    <script>
+        window.onload = function () {
+            var emailField = document.getElementById("emailField");
+            var formPassword = document.getElementById("formPassword");
+            var updatePasswordCheck = document.getElementById("updatePasswordCheck");
+
+            if (!updatePasswordCheck.checked) {
+                formPassword.style.display = "none";
+            }
+
+            if (emailField.value) {
+                emailField.setAttribute("readonly", "readonly");
+            }
+
+            updatePasswordCheck.addEventListener('change', function () {
+                if (this.checked) {
+                    formPassword.style.display = 'flex';
+                    document.getElementById("password").value = "";
+                    document.getElementById("cpassword").value = "";
+                } else {
+                    formPassword.style.display = 'none';
+               }
+       
+            });
+
+        
+        };
+
+        $(document).ready(function () {
+            $("#emailField").on('blur', function () {
+                var email = $("#emailField").val();
+                var userId = $("#userId").val(); 
+
+                $.ajax({
+                    url: '/api/admin/users',
+                    type: 'GET',
+                    success: function (response) {
+                        var userExists = response.data.some(user => user.email.toLowerCase() === email.toLowerCase() && user.id !== userId);
+
+                        if (userExists) {
+
+                            $("#userExistsMessage").text("Email đã tồn tại.").css("color", "red");
+                            $("#submitBtn").prop("disabled", true);
+                        } else {
+                           
+                            $("#userExistsMessage").text("");
+                            $("#submitBtn").prop("disabled", false); 
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

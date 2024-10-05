@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] AnhPark Shop</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/WebGameV1.styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+	<style>
+
+		.navbar-custom {
+			background-color: #767173;
+		}
+
+		}
+	</style>
+	<!-- ===============================================-->
+	<!--    Favicons-->
+	<!-- ===============================================-->
+	<link rel="icon" type="image/png" sizes="32x32" href="~/images//logo/icon.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="~/images//logo/icon.png">
+	<link rel="shortcut icon" type="image/x-icon" href="~/images//logo/icon.png">
+	<link rel="manifest" href="../../assets/img/favicons/manifest.json">
+	<meta name="theme-color" content="#ffffff">
+	<script src="../../vendors/simplebar/simplebar.min.js"></script>
+	<script src="../../assets/js/config.js"></script>
+
+	<!-- ===============================================-->
+	<!--    Stylesheets-->
+	<!-- ===============================================-->
+	<link rel="preconnect" href="https://fonts.googleapis.com/">
+	<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+	<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&amp;display=swap" rel="stylesheet">
+	<link href="../../vendors/simplebar/simplebar.min.css" rel="stylesheet">
+	<link href="../../assets/css/theme.min.css" type="text/css" rel="stylesheet" id="style-default">
+	<link href="../../assets/css/user-rtl.min.css" type="text/css" rel="stylesheet" id="user-style-rtl">
+	<link href="../../assets/css/user.min.css" type="text/css" rel="stylesheet" id="user-style-default">
+</head>
+<body>
+	<header>
+		<div class="container-fluid navbar-light text-white  d-flex justify-content-between align-items-center ">
+			<!-- Logo Section -->
+			<div class="logo">
+				<a href="@Url.Content("~/")">
+					<img id="logoImage" src="~/images/logo/logo_light.png" alt="Logo" class="logo-img" style="height: 80px;" />
+				</a>
+			</div>
+
+
+			<hr style="color:white" />
+			<div class="col-12 col-md-6">
+				<div class="search-box ecommerce-search-box w-100 ">
+					<form class="position-relative">
+						<input class="form-control search-input search form-control-sm" type="search" placeholder=" Tìm tên acc hoặc tên skin mong muốn,..." aria-label="Search" />
+						<span class="fas fa-search search-box-icon"></span>
+					</form>
+				</div>
+			</div>
+
+
+			<!-- Login&Register -->
+			<div class="login-section">
+				<partial name="_loginPartial" />
+			</div>
+		</div>
+
+		<!-- Navbar  -->
+		<nav class="navbar navbar-expand-lg navbar-custom">
+			<div class="container-fluid">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarColor02">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0 hover">
+						<li class="nav-item">
+							<a class="nav-link text-white" asp-area="Public" asp-controller="Home" asp-action="Index">Trang chủ</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-white" asp-area="Public" asp-controller="#" asp-action="Index">Hỗ trợ</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-white" asp-area="Public" asp-controller="#" asp-action="Index">Nạp tiền</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-white" asp-area="Admin" asp-controller="User" asp-action="Index">Quản lí</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<!-- Content -->
+	<div class="container mt-4">
+		<main role="main" class="pb-3">
+			@RenderBody()
+			@Html.AntiForgeryToken()
+			
+	   </main>
+
+	</div>
+
+	<!-- Footer -->
+	<footer class="border-top footer text-muted mt-4">
+		<div class="container">
+			<!-- Footer content goes here -->
+		</div>
+	</footer>
+
+	<!-- Scripts -->
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/vendors/popper/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<!--    JavaScripts-->
+	<!-- ===============================================-->
+	<script src="../../vendors/popper/popper.min.js"></script>
+	<script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+	<script src="../../vendors/anchorjs/anchor.min.js"></script>
+	<script src="../../vendors/is/is.min.js"></script>
+	<script src="../../vendors/fontawesome/all.min.js"></script>
+	<script src="../../vendors/lodash/lodash.min.js"></script>
+	<script src="../../vendors/list.js/list.min.js"></script>
+	<script src="../../vendors/feather-icons/feather.min.js"></script>
+	<script src="../../vendors/dayjs/dayjs.min.js"></script>
+	<script src="../../assets/js/phoenix.js"></script>
+	<script src="../../vendors/isotope-layout/isotope.pkgd.min.js"></script>
+	<script src="../../vendors/isotope-packery/packery-mode.pkgd.min.js"></script>
+	<script src="../../vendors/imagesloaded/imagesloaded.pkgd.min.js"></script>
+
+	@* <script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const logoImage = document.getElementById('logoImage');
+			const lightThemeRadio = document.getElementById('themeSwitcherLight');
+			const darkThemeRadio = document.getElementById('themeSwitcherDark');
+
+			lightThemeRadio.addEventListener('change', function () {
+				if (lightThemeRadio.checked) {
+					logoImage.src = "../images/logo/logo_light.png"
+				}
+			});
+
+			darkThemeRadio.addEventListener('change', function () {
+				if (darkThemeRadio.checked) {
+					logoImage.src = "/images/logo/logo_dark.png"
+				}
+			});
+		});
+	</script> *@
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

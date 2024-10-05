@@ -1,0 +1,50 @@
+﻿@model WebGameV1.Models.ViewModel.SliderVM
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-header">
+            @Model.slider.Title
+        </h2>
+        <div class="card-body">
+            <div class="row">
+                <!-- Left column: Slider details -->
+                <div class="col-md-6">
+                    <h4 class="card-title">Mô tả</h4>
+                    <p class="card-text">
+                        <strong>Trạng thái:</strong>
+                        @if (Model.slider.Status == "unavailable")
+                        {
+                            <span style="color: red;">Không hiển thị</span>
+                        }
+                        else
+                        {
+                            <span style="color: green;">Hiển thị</span>
+                        }
+                    </p>
+                    <p class="card-text"><strong>Link URL:</strong> @Model.slider.LinkUrl</p>
+                    <p class="card-text"><strong>Ngày bắt đầu:</strong> @Model.slider.StartDate</p>
+                    <p class="card-text"><strong>Ngày kết thúc:</strong> @Model.slider.EndDate</p>
+                    <p class="card-text"><strong>Ngày tạo:</strong> @Model.slider.CreateDate</p>
+                    <p class="card-text"><strong>Ngày cập nhật:</strong> @Model.slider.UpdateDate</p>
+                </div>
+
+                <!-- Right column: Image -->
+                <div class="col-md-6">
+                    <h4 class="card-title">Ảnh</h4>
+                    @if (!string.IsNullOrEmpty(Model.slider.ImageUrl))
+                    {
+                        <img src="~/@Model.slider.ImageUrl" alt="Ảnh slider" class="img-fluid" style="border-radius: 8px;" />
+                    }
+                    else
+                    {
+                        <span>No Image Available</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-area="Admin" asp-controller="Slider" asp-action="Index" class="btn btn-primary">Trở lại</a>
+    </div>
+</div>

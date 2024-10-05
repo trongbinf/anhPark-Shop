@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Game Shop</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/home.css" />
+</head>
+<style>
+	.details-product .product-col-right .block-promotion .heading-promo {
+    background: #BF1E2E;
+    padding: 10px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.6rem;
+    line-height: initial;
+}
+</style>
+<body>
+	<div class="container">
+		
+		<!-- Carousel Section -->
+		<div id="carouselExample" class="carousel slide carousel-container" data-ride="carousel">
+			<div class="carousel-inner">
+			</div>
+
+			<a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
+				<div>
+					<span class="fas fa-chevron-left nav-icon" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</div>
+			</a>
+			<a class="carousel-control-next" href="#carouselExample" role="button" data-slide="next">
+				<div >
+					<span class="fas fa-chevron-right nav-icon" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</div>
+			</a>
+		</div>
+		<!-- Banners Section -->
+		<div class="row">
+			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+				<div class="three_banner">
+					<a class="duration-300" href="dang-nhap.html" title="Nạp tiền tự động bằng chuyển khoản">
+						<picture>
+							<source media="(max-width: 480px)" srcset="img/banner_s3/nap-ck-atm-2024.jpg" />
+							<img width="500" height="212" loading="lazy" class="lazyload" src="~/images/banner_s3/nap-ck-atm-2024.jpg" alt="Nạp tiền tự động bằng chuyển khoản" />
+						</picture>
+					</a>
+				</div>
+			</div>
+			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+				<div class="three_banner">
+					<a class="duration-300" href="dang-nhap.html" title="Nạp tiền tự động qua Ví MoMo">
+						<picture>
+							<source media="(max-width: 480px)" srcset="img/banner_s3/nap-qua-momo-03.jpg" />
+							<img width="500" height="212" loading="lazy" class="lazyload" src="~/images/banner_s3/nap-qua-momo-03.jpg" alt="Nạp tiền tự động qua Ví MoMo" />
+						</picture>
+					</a>
+				</div>
+			</div>
+			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+				<div class="three_banner">
+					<a class="duration-300" href="dang-nhap.html" title="Nạp tiền bằng thẻ cào điện thoại">
+						<picture>
+							<source media="(max-width: 480px)" srcset="img/banner_s3/nap-qua-card.jpg" />
+							<img width="500" height="212" loading="lazy" class="lazyload" src="~/images/banner_s3/nap-qua-card.jpg" alt="Nạp tiền bằng thẻ cào điện thoại" />
+						</picture>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Game List Section -->
+	<div class="game-form">
+		<div class="game-item">
+			<a href="game/tong-kho-acc.html">
+				<img src="~/images/products/product.png" alt="Tổng Kho Acc" />
+				<div class="game-name">Tổng Kho Acc</div>
+			</a>
+		</div>
+		<div class="game-item">
+			<a href="game/lien-quan-gia-re.html">
+				<img src="~/images/products/product.png" alt="LMHT Giá Rẻ" />
+				<div class="game-name">Acc LMHT Giá Rẻ</div>
+			</a>
+		</div>
+		<div class="game-item">
+			<a href="game/nick-acc-vip-lien-quan.html">
+				<img src="~/images/products/product.png" alt="Nick Acc VIP LMHT" />
+				<div class="game-name">V.I.P LMHT</div>
+			</a>
+		</div>
+		<div class="game-item">
+			<a href="game/nick-lien-quan-trang-thong-tin.html">
+				<img src="~/images/products/product.png" alt="Acc LMHT Trắng thông tin" />
+				<div class="game-name">Trắng Thông Tin</div>
+			</a>
+		</div>
+		<div class="game-item">
+			<a href="game/acc-thong-tin-dep.html">
+				<img src="~/images/products/product.png" alt="Acc Reg Hot" />
+				<div class="game-name">ACC Reg Hot</div>
+			</a>
+		</div>
+		<div class="game-item">
+			<a href="game/rank-cao-thu.html">
+				<img src="~/images/products/product.png" alt="Rank Cao Thủ" />
+				<div class="game-name">Rank Cao Thủ</div>
+			</a>
+		</div>
+	</div>
+
+
+		<div class="products-slider">
+			
+				<!-- Product List Section -->
+			<div class="product-container product-list-1  products-slider  swiper-full">
+					<h3 class="product-title-header">Acc Lmht Vip Sale</h3>
+
+				<div id="product-list" class="product-list  swiper-wrapper"></div>
+
+				
+
+					<div class="view-more">
+						<button class="btn-view-more">
+							XEM THÊM ACC REG
+							<i class="fa fa-angle-right"></i>
+						</button>
+					</div>
+				</div>
+			
+		</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	
+	<script>
+
+		
+		async function fetchProducts() {
+			try {
+				const response = await fetch('/api/admin/products');
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const products = await response.json();
+				console.log(products); 
+				renderProducts(products);
+			} catch (error) {
+				console.error('Error fetching product data:', error);
+			}
+		}
+
+		
+		function renderProducts(products) {
+			const productList = document.getElementById('product-list');
+			productList.innerHTML = '';
+
+			
+			products.data.forEach(product => {
+				const productItem = document.createElement('div');
+					productItem.classList.add('product-item');
+
+				
+				productItem.innerHTML = `
+								<div class="product-tag product-tag1">Giảm giá ${product.discount * 100}%</div>
+								<img src="${product.mainImageUrl}" alt="${product.productTitle}" />
+								<div class="product-title">${product.productTitle}</div>
+								<hr class="hr-style" />
+								<div class="product-info">
+									<strong>Rank mùa trước:</strong> <span class="rank">Cao thủ</span>
+									<br />
+									» <strong>Tướng:</strong> <span class="sold"> 115</span>
+									» <strong>Skin:</strong> <span class="skin"> 550</span>
+									<br />
+									<div class="row mt-2" style="display: flex; justify-content: space-between; align-items: center;">
+										<div class="product-price col-md-4">
+											<span class="old-price" style="text-decoration: line-through; font-size: 0.8em;">6.800.000đ</span><br>
+											<span class="new-price" style="color: red; font-size: 1em;">3.400.000đ</span>
+										</div>
+
+									    <a class="col-md-8 text-end" href="/Public/Home/Detail?id=${product.productID}">
+											<button class="btn-view-detail" title="Mua">Xem thông tin</button>
+										</a>
+									</div>
+								</div>
+
+								<div class="action-button">
+				                    <a href="/Public/Home/Detail?id=${product.productID}" title="Xem nhanh" class="btn-circle btn-views">
+										<img class="view_img" width="25" height="25" src="images/icon-sp/eye.svg" alt="Xem nhanh" />
+									</a>
+
+									<a href="/Public/Home/Detail?id=${product.productID}" class="btn-circle btn-views" title="Hình ảnh chi tiết">
+										<img width="25" height="25" src="images/icon-sp/card-image.svg" alt="Hình ảnh chi tiết" />
+									</a>
+
+									<a href="checkout.html?productId=${product.productID}" class="btn-circle btn-views" title="Mua nick tự động">
+										<img width="25" height="25" src="images/icon-sp/cash-coin.svg" alt="Mua nick tự động" />
+									</a>
+								</div>
+							`;
+
+				
+				productList.appendChild(productItem);
+			});
+		}
+
+
+		async function fetchSliders() {
+			try {
+				const response = await fetch('/api/admin/sliders');
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const sliders = await response.json();
+				console.log(sliders);
+				renderSliders(sliders);
+			} catch (error) {
+				console.error('Error fetching slider data:', error);
+			}
+		}
+
+		function renderSliders(sliders) {
+			const carouselInner = document.querySelector('.carousel-inner');
+			carouselInner.innerHTML = '';  
+
+			sliders.data.forEach((slider, index) => {
+				if (slider.status === 'available') {
+					const carouselItem = document.createElement('div');
+					carouselItem.classList.add('carousel-item');
+					if (index === 0) {
+						carouselItem.classList.add('active');  
+					}
+
+					
+					carouselItem.innerHTML = `
+						<a href="${slider.linkUrl}">
+							<img src="${slider.imageUrl}" class="d-block w-100" alt="${slider.title}">
+						</a>
+					`;
+
+					carouselInner.appendChild(carouselItem);
+				}
+			});
+		}
+
+
+		fetchProducts();
+		fetchSliders();
+	
+		
+
+		
+		
+
+
+
+	</script>
+
+</body>
+</html>
