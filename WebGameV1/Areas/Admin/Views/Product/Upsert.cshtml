@@ -15,21 +15,22 @@
                     <!-- Product Info -->
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3">
-                            <label asp-for="product.ProductTitle">Tên sản phẩm</label>
-                            <input asp-for="product.ProductTitle" class="form-control" id="productName" />
-                            <span asp-validation-for="product.ProductTitle" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
                             <label asp-for="product.CategoryID">Loại game</label>
-                            <select asp-for="product.CategoryID" asp-items="Model.CategoryList" class="form-control">
+                            <select asp-for="product.CategoryID" asp-items="Model.CategoryList" class="form-control" id="categoryDropdown">
                                 <option value="">-- Chọn Loại game --</option>
                             </select>
                             <span asp-validation-for="product.CategoryID" class="text-danger"></span>
                         </div>
-                      
-                       
+
+                        <div class="col-md-6 mb-3">
+                            <label for="subcategoryDropdown">Loại phụ</label>
+                            <select asp-for="product.SubCategoryID" asp-items="Model.SubCategoryList" class="form-control" id="subcategoryDropdown">
+                                <option value="">-- Chọn Loại phụ --</option>
+                            </select>
+                            <span asp-validation-for="product.SubCategoryID" class="text-danger"></span>
+                        </div>
                     </div>
+
 
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3">
@@ -126,6 +127,7 @@
 
 
         $(document).ready(function () {
+            // Check username existence
             $("#userName").on('blur', function () {
                 var name = $("#userName").val();
                 var id = $("#productID").val();
@@ -149,18 +151,40 @@
                     }
                 });
             });
+
+            // Load Subcategories based on Category selection
+            $("#categoryDropdown").change(function () {
+                var categoryId = $(this).val();
+                $.ajax({
+                    url: '/api/admin/subcategories/' + categoryId, 
+                    type: 'GET',
+                    success: function (response) {
+                        var subcategoryDropdown = $("#subcategoryDropdown");
+                        subcategoryDropdown.empty();
+                        subcategoryDropdown.append('<option value="">-- Chọn Loại phụ --</option>'); // Reset dropdown
+
+                        $.each(response.data, function (index, subcategory) {
+                            subcategoryDropdown.append('<option value="' + subcategory.subCategoryID + '">' + subcategory.subCategoryName + '</option>');
+                        });
+                    },
+                    error: function () {
+                        console.error("Error loading subcategories");
+                    }
+                });
+            });
         });
 
-        tinymce.init({
-            selector: 'textarea',
-            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
-            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-            tinycomments_mode: 'embedded',
-            tinycomments_author: 'Author name',
-            mergetags_list: [
-                { value: 'First.Name', title: 'First Name' },
-                { value: 'Email', title: 'Email' },
-            ],
-        });
+
+        // tinymce.init({
+        //     selector: 'textarea',
+        //     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+        //     toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        //     tinycomments_mode: 'embedded',
+        //     tinycomments_author: 'Author name',
+        //     mergetags_list: [
+        //         { value: 'First.Name', title: 'First Name' },
+        //         { value: 'Email', title: 'Email' },
+        //     ],
+        // });
     </script>
 }

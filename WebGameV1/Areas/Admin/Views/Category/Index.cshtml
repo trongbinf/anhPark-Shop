@@ -61,7 +61,12 @@
                         },
                         "width": "5%"
                     },
-                    { "data": "categoryName", "width": "15%" },
+                    {
+                        "data": "categoryName", "render": function (data, type, row) {
+                            return `<a href="/Admin/Category/Detail?id=${row.categoryID}" class="text-decoration-none">${data}</a>`;
+                        },
+                        "width": "15%"
+                    },
                     { "data": "createDate", "width": "15%" },
                     { "data": "updateDate", "width": "15%" },
                     {

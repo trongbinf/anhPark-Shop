@@ -68,6 +68,7 @@ namespace WebGameV1.Areas.Identity.Pages.Account
 
             [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
             [StringLength(20, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự và tối đa {1} ký tự.", MinimumLength = 6)]
+            [CustomPasswordValidation(ErrorMessage = "Mật khẩu phải bắt đầu bằng chữ cái viết hoa và chứa ít nhất một ký tự đặc biệt.")]
             [DataType(DataType.Password)]
             [Display(Name = "Mật khẩu")]
             public string Password { get; set; }

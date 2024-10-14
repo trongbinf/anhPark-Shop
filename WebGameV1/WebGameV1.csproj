@@ -44,7 +44,7 @@
     <Folder Include="Areas\Public\Controllers\" />
     <Folder Include="wwwroot\assets\css\toastr\" />
     <Folder Include="wwwroot\images\products\img-main\" />
-    <Folder Include="wwwroot\images\products\img-details\" />
+    <Folder Include="wwwroot\images\sliders\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\images\icon-sp\card-image.svg" />

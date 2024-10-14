@@ -1,35 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Hosting;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using WebGameV1.DataAcess.Repository.IRepository;
 using WebGameV1.Models;
 using WebGameV1.Models.ViewModel;
 
 namespace WebGameV1.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    public class SliderController : Controller
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private const string ImagePath = "images/sliders"; 
 
-	[Area("Admin")]
-	public class SliderController : Controller
-	{
-
-		private readonly IUnitOfWork _unitOfWork;
-		private IWebHostEnvironment _webHostEnvironment;
-
-		public SliderController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
-		{
-			_unitOfWork = unitOfWork;
-			_webHostEnvironment = webHostEnvironment;
-		}
-		public IActionResult Index()
-		{
-			IEnumerable <Slider> objSliderList = _unitOfWork.Slider.GetAll();
-			return View(objSliderList);
-		}
-
-
-        public IActionResult Upsert(int? id)
+        public SliderController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
-			SliderVM sliderVM = new SliderVM();
-           
+            _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            IEnumerable<Slider> objSliderList = await _unitOfWork.Slider.GetAllAsync();
+            return View(objSliderList);
+        }
+
+        public async Task<IActionResult> Upsert(int? id)
+        {
+            SliderVM sliderVM = new SliderVM();
 
             if (id == null || id == 0)
             {
@@ -38,21 +39,18 @@ namespace WebGameV1.Areas.Admin.Controllers
             }
             else
             {
-
-                sliderVM.slider = _unitOfWork.Slider.GetFirstOrDefault(x => x.Id == id);
+                sliderVM.slider = await _unitOfWork.Slider.GetFirstOrDefaultAsync(x => x.Id == id);
                 if (sliderVM.slider == null)
                 {
                     return NotFound();
                 }
                 return View(sliderVM);
             }
-
         }
 
-        public IActionResult Detail(int? id)
+        public async Task<IActionResult> Detail(int? id)
         {
             SliderVM sliderVM = new SliderVM();
-
 
             if (id == null || id == 0)
             {
@@ -60,108 +58,94 @@ namespace WebGameV1.Areas.Admin.Controllers
             }
             else
             {
-
-                sliderVM.slider = _unitOfWork.Slider.GetFirstOrDefault(x => x.Id == id);
+                sliderVM.slider = await _unitOfWork.Slider.GetFirstOrDefaultAsync(x => x.Id == id);
                 if (sliderVM.slider == null)
                 {
                     return NotFound();
                 }
                 return View(sliderVM);
             }
-
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(SliderVM sliderVM)
+        public async Task<IActionResult> Upsert(SliderVM sliderVM)
         {
             if (!ModelState.IsValid)
             {
-              
                 return View(sliderVM);
             }
 
             string wwwRootPath = _webHostEnvironment.WebRootPath;
-            var existslider = _unitOfWork.Slider.GetFirstOrDefault(p => p.Id == sliderVM.slider.Id);
-
+            var existslider = await _unitOfWork.Slider.GetFirstOrDefaultAsync(p => p.Id == sliderVM.slider.Id);
 
             if (sliderVM.ImageUrl != null)
             {
                 string mainFileName = Guid.NewGuid().ToString();
-                string mainUploads = Path.Combine(wwwRootPath, "images\\sliders");
+                string mainUploads = Path.Combine(wwwRootPath, ImagePath);
                 string mainExtension = Path.GetExtension(sliderVM.ImageUrl.FileName);
-
 
                 if (existslider != null && !string.IsNullOrEmpty(existslider.ImageUrl))
                 {
-                    string oldImageUrlUrl = Path.Combine(wwwRootPath, existslider.ImageUrl);
-                    if (System.IO.File.Exists(oldImageUrlUrl))
+                    string oldImageUrl = Path.Combine(wwwRootPath, existslider.ImageUrl);
+                    if (System.IO.File.Exists(oldImageUrl))
                     {
-                        System.IO.File.Delete(oldImageUrlUrl);
+                        System.IO.File.Delete(oldImageUrl);
                     }
                 }
 
-
                 using (var fileStream = new FileStream(Path.Combine(mainUploads, mainFileName + mainExtension), FileMode.Create))
                 {
-                    sliderVM.ImageUrl.CopyTo(fileStream);
+                    await sliderVM.ImageUrl.CopyToAsync(fileStream);
                 }
-                sliderVM.slider.ImageUrl = $"images\\sliders\\{mainFileName}{mainExtension}";
+                sliderVM.slider.ImageUrl = $"{ImagePath}/{mainFileName}{mainExtension}";
             }
             else
             {
-
                 sliderVM.slider.ImageUrl = existslider?.ImageUrl;
-            }         
-
+            }
 
             if (sliderVM.slider.Id == 0)
             {
-                _unitOfWork.Slider.Add(sliderVM.slider);
+                await _unitOfWork.Slider.AddAsync(sliderVM.slider);
                 TempData["Success"] = "Thêm mới slide thành công!";
             }
             else
             {
-                _unitOfWork.Slider.Update(sliderVM.slider);
+                await _unitOfWork.Slider.UpdateAsync(sliderVM.slider);
                 TempData["Success"] = "Cập nhật slide thành công!";
             }
 
-            _unitOfWork.Save();
+            await _unitOfWork.SaveAsync(); // Call the async Save method
             return RedirectToAction("Index");
         }
 
-
-
         #region API_CALLS
         [HttpGet]
-		[Route("api/admin/sliders")]
-		public IActionResult GetSliders()
-		{
-			var objSliderList = _unitOfWork.Slider.GetAll();
-			return Json(new { data = objSliderList });
-		}
-
+        [Route("api/admin/sliders")]
+        public async Task<IActionResult> GetSliders()
+        {
+            var objSliderList = await _unitOfWork.Slider.GetAllAsync();
+            return Json(new { data = objSliderList });
+        }
 
         [HttpPost]
         [Route("api/admin/sliders/status")]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateStatus(int id, string status)
+        public async Task<IActionResult> UpdateStatus(int id, string status)
         {
-            var slider = _unitOfWork.Slider.GetFirstOrDefault(p => p.Id == id);
+            var slider = await _unitOfWork.Slider.GetFirstOrDefaultAsync(p => p.Id == id);
             if (slider == null)
             {
                 return Json(new { success = false, message = "Không tìm thấy slider." });
             }
 
             slider.Status = status;
-            _unitOfWork.Slider.Update(slider);
-            _unitOfWork.Save();
+            await _unitOfWork.Slider.UpdateAsync(slider);
+            await _unitOfWork.SaveAsync();
 
             return Json(new { success = true, message = "Cập nhật trạng thái slider thành công!" });
         }
-
-
         #endregion
     }
 }

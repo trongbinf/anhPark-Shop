@@ -18,20 +18,26 @@ namespace WebGameV1.DataAcess.Repository
         public CategoryRepository(ApplicationDBContext db) : base(db)
         {
             _db = db;
-
-        } 
-
-       
-        public void Save()
-        {
-            _db.SaveChanges();
-        }
-        public void Update(Category category)
-        {
-             category.UpdateDate = DateOnly.FromDateTime(DateTime.Now);
-            _db.Categories.Update(category);
         }
 
+        public async Task SaveAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+
+    
+
+        public async Task<Category> GetAsync(int categoryId)
+        {
+            return await _db.Categories.FindAsync(categoryId);
+        }
+
+        public async Task UpdateAsync(Category category)
+        {
         
-}
+            category.UpdateDate = DateOnly.FromDateTime(DateTime.Now);       
+            _db.Categories.Update(category);
+           
+        }
+    }
 }

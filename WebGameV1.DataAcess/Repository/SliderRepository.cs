@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Webbansach.DataAcess.Repository;
 using WebGameV1.DataAcess.Data;
@@ -11,34 +8,34 @@ using WebGameV1.Models;
 
 namespace WebGameV1.DataAcess.Repository
 {
-	public class SliderRepository : Repository<Slider>, ISlider
-	{
-		private readonly ApplicationDBContext _db;
+    public class SliderRepository : Repository<Slider>, ISlider
+    {
+        private readonly ApplicationDBContext _db;
 
-		public SliderRepository(ApplicationDBContext db) : base(db)
-		{
-			_db = db;
-		}
-		public void Save()
-		{
-			_db.SaveChanges();
-		}
-		public void Update(Slider slider)
-		{
-			var objfromDb = _db.Sliders.FirstOrDefault(a => a.Id == slider.Id);
+        public SliderRepository(ApplicationDBContext db) : base(db)
+        {
+            _db = db;
+        }
 
-			if (objfromDb != null)
-			{
-				objfromDb.Title = slider.Title;
-				objfromDb.LinkUrl = slider.LinkUrl;
-				objfromDb.ImageUrl = slider.ImageUrl;
-				objfromDb.Status = slider.Status;
-				objfromDb.UpdateDate = DateOnly.FromDateTime(DateTime.Now);
-				objfromDb.StartDate = slider.StartDate;
-				objfromDb.EndDate = slider.EndDate;
+        public async Task SaveAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
 
 
-			}
-		}
-	}
+        public async Task UpdateAsync(Slider slider)
+        {
+            var objFromDb = await _db.Sliders.FindAsync(slider.Id);
+            if (objFromDb != null)
+            {
+                objFromDb.Title = slider.Title;
+                objFromDb.LinkUrl = slider.LinkUrl;
+                objFromDb.ImageUrl = slider.ImageUrl;
+                objFromDb.Status = slider.Status;
+                objFromDb.UpdateDate = DateOnly.FromDateTime(DateTime.Now);
+                objFromDb.StartDate = slider.StartDate;
+                objFromDb.EndDate = slider.EndDate;
+            }
+        }
+    }
 }

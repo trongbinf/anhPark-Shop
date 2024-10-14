@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using WebGameV1.DataAcess.Repository.IRepository;
 using WebGameV1.Models;
 using WebGameV1.Models.ViewModel;
@@ -10,26 +11,66 @@ namespace WebGameV1.Areas.Public.Controllers
     [Area("Public")]
     public class HomeController : Controller
     {
-
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //IEnumerable<Product> ProductList = _unitOfWork.Product.GetAll(includeProperties: "Category");
-            return View(/*ProductList*/);
+            IEnumerable<Product> productList = await _unitOfWork.Product.GetAllAsync(includeProperties: "Category");
+            return View(productList);
         }
 
-        public IActionResult Detail(int? id)
+        public async Task<IActionResult> ListProducts(int? cateId, int? subId)
         {
-           ProductVM productVM = new ProductVM()
+            ProductVM productVM = new ProductVM()
             {
-                CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                CategoryList = (await _unitOfWork.Category.GetAllAsync()).Select(u => new SelectListItem
+                {
+                    Text = u.CategoryName,
+                    Value = u.CategoryID.ToString()
+                }),
+            };
+
+
+
+            if ((cateId == null || cateId == 0) && (subId == null || subId == 0))
+            {
+                return NotFound();
+            }
+
+        
+            var productsQuery = await _unitOfWork.Product.GetAllAsync(
+                p => p.CategoryID == cateId,
+                includeProperties: "SubCategory"
+            );
+
+         
+            if (subId != null && subId != 0)
+            {
+                productsQuery = productsQuery
+                    .Where(p => p.SubCategoryID == subId)
+                    .ToList();
+            }
+
+          
+            productVM.Products = productsQuery;          
+            productVM.sub = await _unitOfWork.SubCategory.GetFirstOrDefaultAsync(x => x.SubCategoryID == subId);
+
+            return View(productVM);
+        }
+
+
+        public async Task<IActionResult> Detail(int? id)
+        {
+            ProductVM productVM = new ProductVM()
+            {
+                CategoryList = (await _unitOfWork.Category.GetAllAsync()).Select(u => new SelectListItem
                 {
                     Text = u.CategoryName,
                     Value = u.CategoryID.ToString()
@@ -42,8 +83,7 @@ namespace WebGameV1.Areas.Public.Controllers
             }
             else
             {
-
-                productVM.product = _unitOfWork.Product.GetFirstOrDefault(x => x.ProductID == id);
+                productVM.product = await _unitOfWork.Product.GetFirstOrDefaultAsync(x => x.ProductID == id);
                 if (productVM.product == null)
                 {
                     return NotFound();

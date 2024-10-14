@@ -10,26 +10,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>  
-    <style>
-        .container {
-            max-width: 600px;
-            margin-top: 50px;
-        }
-
-        .form-label {
-            font-weight: bold;
-        }
-
-        .form-floating input {
-            border-radius: 0.375rem;
-        }
-    </style>
+  
 </head>
 <body>
-    <div class="container">
-        <h3 class="text-center mb-4">@ViewData["Title"]</h3>
+    <div class=" container mt-5">
+        <h3 class="text-center">@ViewData["Title"]</h3>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-4 mx-auto mt-2">
                 <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                     <h5>Tạo tài khoản mới</h5>
                     <hr />
@@ -61,7 +48,7 @@
     </div>
 
 
-    <div class="mt-3">
+    <div class="mt-4">
         <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">Trở lại</a>
     </div>
     @section Scripts {

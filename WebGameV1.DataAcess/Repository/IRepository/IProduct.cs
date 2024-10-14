@@ -9,6 +9,6 @@ namespace WebGameV1.DataAcess.Repository.IRepository
 {
 	public interface IProduct: IRepository<Product>
 	{
-		void Update(Product product);
+        Task UpdateAsync(Product product);
 	}
 }

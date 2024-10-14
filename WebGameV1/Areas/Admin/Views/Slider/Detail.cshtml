@@ -1,5 +1,17 @@
 ﻿@model WebGameV1.Models.ViewModel.SliderVM
+<style>
+    .img-s{
+        object-fit: cover; /* Ensures image fits within the given dimensions */
+        width: 100%; /* Full width of the container */
+        height: 200px; /* Fixed height for uniformity */
+        border-radius: 8px;
+        margin-bottom: 10px;
+       
+    }
 
+     
+
+</style>
 <div class="container">
     <div class="card">
         <h2 class="card-header">
@@ -33,7 +45,7 @@
                     <h4 class="card-title">Ảnh</h4>
                     @if (!string.IsNullOrEmpty(Model.slider.ImageUrl))
                     {
-                        <img src="~/@Model.slider.ImageUrl" alt="Ảnh slider" class="img-fluid" style="border-radius: 8px;" />
+                        <img src="~/@Model.slider.ImageUrl" alt="Ảnh slider" class="img-fluid img-s" style="border-radius: 8px;" />
                     }
                     else
                     {

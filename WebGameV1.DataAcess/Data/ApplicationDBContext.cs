@@ -18,5 +18,7 @@ namespace WebGameV1.DataAcess.Data
 
 		public DbSet<Slider> Sliders { get; set; }
 
-	}
+        public DbSet<SubCategory> SubCategories { get; set; }
+
+    }
 }

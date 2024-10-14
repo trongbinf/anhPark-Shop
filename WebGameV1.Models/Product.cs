@@ -11,10 +11,7 @@ namespace WebGameV1.Models
         [Key]
         public int ProductID { get; set; }
 
-        [Required(ErrorMessage = "Tiêu đề sản phẩm là bắt buộc.")]
-        [StringLength(100, ErrorMessage = "Tên sản phẩm phải có ít nhất {2} ký tự và tối đa {1} ký tự.", MinimumLength = 6)]
-        [Display(Name = "Tiêu đề sản phẩm")]
-        public string ProductTitle { get; set; }
+        public string? ProductTitle { get; set; }
 
 
         [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
@@ -53,8 +50,18 @@ namespace WebGameV1.Models
         public int CategoryID { get; set; }
 
         [ValidateNever]
+
         [ForeignKey("CategoryID")]
         public Category Category { get; set; }
+
+        [Required(ErrorMessage = "Loại phụ game là bắt buộc")]
+        public int SubCategoryID { get; set; }
+
+        [ValidateNever]
+
+        [ForeignKey("SubCategoryID")]
+        public SubCategory SubCategory { get; set; }
+      
 
         public double CalculateDiscountedPrice()
         {

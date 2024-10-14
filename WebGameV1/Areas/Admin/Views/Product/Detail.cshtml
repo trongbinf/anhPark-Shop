@@ -1,109 +1,129 @@
 ﻿@model WebGameV1.Models.ViewModel.ProductVM
-
+<!-- Fancybox CSS -->
+<link rel="stylesheet" href="~/vendors/fancyapps/fancyapps.css" />
 <style>
-    .img-f {
-        object-fit: cover;
-        border-radius: 8px;
-        width: 100%;
-        height: 200px; 
-        margin-bottom: 10px; 
-    }
+	.img-f, .img-main {
+		object-fit: cover;
+		width: 100%;
+		height: 200px;
+		border-radius: 8px;
+		margin-bottom: 10px;
+		cursor: pointer;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
 
-    .img-main {
-        width: 100%;
-        max-height: 300px; 
-        object-fit: cover;
-        border-radius: 8px;
-    }
+		.img-f:hover, .img-main:hover {
+			transform: scale(1.05);
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+		}
 
-    .detail-image-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-        grid-gap: 15px; 
-    }
+	.detail-image-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		grid-gap: 15px;
+	}
 
-    
-    .details-product .product-col-right .block-promotion .heading-promo {
-        background: #BF1E2E;
-        padding: 10px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        font-weight: 600;
-        font-size: 1.6rem;
-        line-height: initial;
-    }
+	.carousel__button {
+		padding: 8px;
+	}
 
+		.carousel__button:hover {
+			background: #cbd6dc;
+		}
 </style>
 
 <div class="card">
-    <h2 class="card-header">
-        @Model.product.ProductTitle
-    </h2>
-    <div class="card-body ">
-             
-        <div class="row">
-            <div class="col-md-6">
-                <h4 class="card-title">Mô tả sản phẩm</h4>
-                <p class="card-text">@Html.Raw(@Model.product.Description)</p>
-            </div>
+	<h2 class="card-header">
+		@Model.product.ProductTitle
+	</h2>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-4">
+				<h4 class="card-title">Thông tin sản phẩm</h4>
+				<p class="card-text">
+					<strong>Trạng thái:</strong>
+					@if (Model.product.Status == "unavailable")
+					{
+						<span style="color: red;">Không hiển thị</span>
+					}
+					else
+					{
+						<span style="color: green;">Hiển thị</span>
+					}
+				</p>
+				<p class="card-text"><strong>Loại tài khoản:</strong> @Model.product.Category.CategoryName</p>
+				<p class="card-text"><strong>Ngày tạo:</strong> @Model.product.CreateDate</p>
+				<p class="card-text"><strong>Ngày cập nhật:</strong> @Model.product.UpdateDate</p>
+				<p class="card-text"><strong>Giá tiền:</strong> @Model.product.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</p>
+			</div>
+			<div class="col-md-8">
+				<h4 class="card-title">Mô tả sản phẩm</h4>
+				<p class="card-text">@Html.Raw(@Model.product.Description)</p>
+			</div>
+		</div>
 
-            <div class="col-md-6">
-                <h4 class="card-title">Thông tin sản phẩm</h4>
-                <p class="card-text">
-                    <strong>Trạng thái:</strong>
-                    @if (Model.product.Status == "unavailable")
-                    {
-                        <span style="color: red;">Không hiển thị</span>
-                    }
-                    else
-                    {
-                        <span style="color: green;">Hiển thị</span>
-                    }
-                </p>
+		<div class="row mt-6">
+			<div class="col-md-2">
+				<h4 class="card-title">Hình ảnh chính</h4>
+				@if (!string.IsNullOrEmpty(Model.product.MainImageUrl))
+				{
+					<a data-fancybox="gallery" href="~/@Model.product.MainImageUrl">
+						<img src="~/@Model.product.MainImageUrl" alt="Hình ảnh chính" class="img-main" />
+					</a>
+				}
+				else
+				{
+					<p>Không có hình ảnh chính.</p>
+				}
+			</div>
 
-                <p class="card-text"><strong>Loại tài khoản:</strong> @Model.product.Category.CategoryName</p>
-                <p class="card-text"><strong>Ngày tạo:</strong> @Model.product.CreateDate</p>
-                <p class="card-text"><strong>Ngày cập nhật:</strong> @Model.product.UpdateDate</p>
-                <p class="card-text"><strong>Giá tiền:</strong> @Model.product.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</p>
-            </div>
-        </div>
+			<div class="col-md-10">
+				<h4 class="card-title">Hình ảnh chi tiết</h4>
+				@if (!string.IsNullOrEmpty(Model.product.DetailImageUrl))
+				{
+					var detailImages = Model.product.DetailImageUrl.Split(",");
+					<div class="detail-image-grid">
+						@foreach (var imageUrl in detailImages)
+						{
+							<a data-fancybox="gallery" href="~/@imageUrl">
+								<img src="~/@imageUrl" alt="Hình ảnh chi tiết" class="img-f" />
+							</a>
+						}
+					</div>
+				}
+				else
+				{
+					<p>Không có hình ảnh chi tiết.</p>
+				}
+			</div>
+		</div>
 
-        <div class="row mt-6">
-            <div class="col-md-2">
-                <h4 class="card-title">Hình ảnh chính</h4>
-                @if (!string.IsNullOrEmpty(Model.product.MainImageUrl))
-                {
-                    <img src="~/@Model.product.MainImageUrl" alt="Hình ảnh chính" class="img-main" />
-                }
-                else
-                {
-                    <p>Không có hình ảnh chính.</p>
-                }
-            </div>
-          
-
-            <div class="col-md-10">
-                <h4 class="card-title">Hình ảnh chi tiết</h4>
-                @if (!string.IsNullOrEmpty(Model.product.DetailImageUrl))
-                {
-                    var detailImages = Model.product.DetailImageUrl.Split(",");
-                    <div class="detail-image-grid">
-                        @foreach (var imageUrl in detailImages)
-                        {
-                            <img src="~/@imageUrl" alt="Hình ảnh chi tiết" class="img-f" />
-                        }
-                    </div>
-                }
-                else
-                {
-                    <p>Không có hình ảnh chi tiết.</p>
-                }
-            </div>
-        </div>
-
-        <div class="mt-4">
-            <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-primary">Trở lại</a>
-        </div>
-    </div>
+		<div class="mt-4">
+			<a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-primary">Trở lại</a>
+		</div>
+	</div>
 </div>
+
+
+
+@section Scripts {
+	<script src="~/vendors/fancyapps/fancyapps.js"></script>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			Fancybox.bind('[data-fancybox="gallery"]', {
+			
+				infinite: true,     
+				animationEffect: "fade", 
+				buttons: [
+					"zoom",
+					"slideShow",
+					"thumbs",
+					"close"
+				],
+			});
+		});
+	</script>
+}
+
+

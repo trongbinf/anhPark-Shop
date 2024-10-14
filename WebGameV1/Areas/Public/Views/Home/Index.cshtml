@@ -19,6 +19,14 @@
     font-size: 1.6rem;
     line-height: initial;
 }
+
+	.fix-a:hover{
+		color:#fff;
+		text-decoration:none;
+	}
+	.fix-a{
+		color: #fff;
+	}
 </style>
 <body>
 	<div class="container">
@@ -116,97 +124,260 @@
 		</div>
 	</div>
 
-
-		<div class="products-slider">
-			
-				<!-- Product List Section -->
-			<div class="product-container product-list-1  products-slider  swiper-full">
-					<h3 class="product-title-header">Acc Lmht Vip Sale</h3>
-
-				<div id="product-list" class="product-list  swiper-wrapper"></div>
-
-				
-
-					<div class="view-more">
-						<button class="btn-view-more">
-							XEM THÊM ACC REG
-							<i class="fa fa-angle-right"></i>
-						</button>
-					</div>
-				</div>
+	<div class="product-container">
+		<input type="hidden" id="sub-id-1" value="" />
+		<h3 class="product-title-header" id="product-title-header"></h3>
+		<div class="product-list" id="product-list">
 			
 		</div>
 
+
+		<div class="view-more">
+			<button class="btn-view-more" id="view-more-title"></button>
+		</div>
+
+	</div>
+
+	<div class="products-slider">
+
+		<!-- Product List Section -->
+		<div class="product-container product-list-1  products-slider ">
+			<input type="hidden" id="sub-id-2" value="" />
+			<h3 class="product-title-header" id="product-title-header1"></h3>
+
+			<div id="product-list1" class="product-list "></div>
+
+
+
+			<div class="view-more">
+				<button class="btn-view-more" id="view-more-title1"></button>
+			</div>
+		</div>
+
+	</div>
+
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-	
-	<script>
 
+	<script>
 		
-		async function fetchProducts() {
+
+
+		async function renderSubCategorys(subCategory) {
+			const productTitle = document.getElementById('product-title-header');
+			const productTitle1 = document.getElementById('product-title-header1');
+			const subId1 = document.getElementById('sub-id-1');
+			const subId2 = document.getElementById('sub-id-2');
+
+			const subCategoryArray = subCategory.data || [];
+
+			if (subCategoryArray.length > 0) {
+				productTitle.innerHTML = `${subCategoryArray[0].subCategoryName}`;
+			    subId1.value = subCategoryArray[0].subCategoryID;
+				console.log('Sub ID 1:', subId1.value); 		
+				await fetchProducts(2, subId1.value); 
+
+				productTitle1.innerHTML = `${subCategoryArray[3].subCategoryName}`;
+				subId2.value = subCategoryArray[3].subCategoryID; 
+				console.log('Sub ID 2:', subId2.value);
+				await fetchProducts1(2, subId2.value);
+					
+				
+			} else {
+				productTitle.innerHTML = 'Không có danh mục phụ nào.';
+				productTitle1.innerHTML = '';
+			}
+		}
+
+
+		async function fetchSubCategory() {
 			try {
-				const response = await fetch('/api/admin/products');
+				const response = await fetch('api/admin/subcategories/2');
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const subCategory = await response.json();
+				console.log(subCategory);
+				renderSubCategorys(subCategory);
+			} catch (error) {
+				console.error('Error fetching product data:', error);
+				return { data: [] };
+			}
+		}
+
+		async function fetchProducts(categoryId, subCategoryId) {
+			try {
+			
+				const url = `/api/admin/get-products/${categoryId}&&${subCategoryId}`;
+
+				const response = await fetch(url);
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
 				const products = await response.json();
-				console.log(products); 
+				console.log(products);
 				renderProducts(products);
 			} catch (error) {
 				console.error('Error fetching product data:', error);
+				return { data: [] };
 			}
 		}
 
-		
+		async function fetchProducts1(categoryId, subCategoryId) {
+			try {
+
+				const url = `/api/admin/get-products/${categoryId}&&${subCategoryId}`;
+
+				const response = await fetch(url);
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const products = await response.json();
+				console.log(products);
+				renderProducts1(products);
+			} catch (error) {
+				console.error('Error fetching product data:', error);
+				return { data: [] };
+			}
+		}
+
+
+
 		function renderProducts(products) {
-			const productList = document.getElementById('product-list');
+			const productList = document.getElementById('product-list');			
+			const viewMoreTitle = document.getElementById('view-more-title');
 			productList.innerHTML = '';
 
-			
+			const productArray = products.data || products;
+
+
+			if (productArray.length > 0) {
+				
+				var link = document.createElement('a');
+				link.classList.add('fix-a');
+				link.href = '/Public/Home/ListProducts?cateId=' + productArray[0].categoryID + '&&subId=' + productArray[0].subCategory.subCategoryID;
+				link.innerHTML = 'XEM THÊM ' + productArray[0].subCategory.subCategoryName + ' <i class="fas fa-angle-right"></i>';
+
+				viewMoreTitle.innerHTML = ''; 
+				viewMoreTitle.appendChild(link); 
+			}
+
+
 			products.data.forEach(product => {
 				const productItem = document.createElement('div');
-					productItem.classList.add('product-item');
+				productItem.classList.add('product-item');
 
-				
+
 				productItem.innerHTML = `
-								<div class="product-tag product-tag1">Giảm giá ${product.discount * 100}%</div>
-								<img src="${product.mainImageUrl}" alt="${product.productTitle}" />
-								<div class="product-title">${product.productTitle}</div>
-								<hr class="hr-style" />
-								<div class="product-info">
-									<strong>Rank mùa trước:</strong> <span class="rank">Cao thủ</span>
-									<br />
-									» <strong>Tướng:</strong> <span class="sold"> 115</span>
-									» <strong>Skin:</strong> <span class="skin"> 550</span>
-									<br />
-									<div class="row mt-2" style="display: flex; justify-content: space-between; align-items: center;">
-										<div class="product-price col-md-4">
-											<span class="old-price" style="text-decoration: line-through; font-size: 0.8em;">6.800.000đ</span><br>
-											<span class="new-price" style="color: red; font-size: 1em;">3.400.000đ</span>
+												<div class="product-tag product-tag1">${product.subCategory.subCategoryName }</div>
+												<img src="${product.mainImageUrl}" alt="${product.productTitle}" />
+												<div class="product-title">${product.productTitle}</div>
+												<hr class="hr-style" />
+												<div class="product-info">
+											    <div class="product-info">
+													<strong>Rank mùa trước:</strong> <span class="rank">Cao thủ</span>
+													<br />
+													» <strong>Tướng:</strong> <span class="sold"> 115</span>
+													» <strong>Skin:</strong> <span class="skin"> 550</span>
+													<br />
+													<div class="row mt-2" style="display: flex; justify-content: space-between; align-items: center;">
+														<div class="product-price col-md-4">
+															<span class="old-price" style="text-decoration: line-through; font-size: 0.8em;">6.800.000đ</span><br>
+															<span class="new-price" style="color: red; font-size: 1em;">3.400.000đ</span>
+														</div>
+
+														<a class="col-md-8 text-end" href="/Public/Home/Detail?id=${product.productID}">
+															<button class="btn-view-detail" title="Mua">Xem thông tin</button>
+														</a>
+													</div>
+												</div>
+
+												<div class="action-button">
+													<a href="/Public/Home/Detail?id=${product.productID}" title="Xem nhanh" class="btn-circle btn-views">
+														<img class="view_img" width="25" height="25" src="images/icon-sp/eye.svg" alt="Xem nhanh" />
+													</a>
+
+													<a href="/Public/Home/Detail?id=${product.productID}" class="btn-circle btn-views" title="Hình ảnh chi tiết">
+														<img width="25" height="25" src="images/icon-sp/card-image.svg" alt="Hình ảnh chi tiết" />
+													</a>
+
+													<a href="checkout.html?productId=${product.productID}" class="btn-circle btn-views" title="Mua nick tự động">
+														<img width="25" height="25" src="images/icon-sp/cash-coin.svg" alt="Mua nick tự động" />
+													</a>
+												</div>
+											`;
+
+
+				productList.appendChild(productItem);
+			});
+		}
+
+
+
+
+		function renderProducts1(products) {
+			const productList = document.getElementById('product-list1');
+			const viewMoreTitle = document.getElementById('view-more-title1');
+			productList.innerHTML = '';
+
+			const productArray = products.data || products;
+			console.log(productArray);
+
+			if (productArray.length > 0) {
+
+				var link = document.createElement('a');
+				link.classList.add('fix-a');
+				link.href = '/Public/Home/ListProducts?cateId=' + productArray[3].categoryID + '&&subId=' + productArray[3].subCategory.subCategoryID;
+				link.innerHTML = 'XEM THÊM ' + productArray[3].subCategory.subCategoryName + ' <i class="fas fa-angle-right"></i>';
+
+				viewMoreTitle.innerHTML = '';
+				viewMoreTitle.appendChild(link);
+			}
+
+			products.data.forEach(product => {
+				const productItem = document.createElement('div');
+				productItem.classList.add('product-item');
+
+
+				productItem.innerHTML = `
+										<div class="product-tag product-tag1">Giảm giá ${product.discount * 100}%</div>
+										<img src="${product.mainImageUrl}" alt="${product.productTitle}" />
+										<div class="product-title">${product.productTitle}</div>
+										<hr class="hr-style" />
+										<div class="product-info">
+											<strong>Rank mùa trước:</strong> <span class="rank">Cao thủ</span>
+											<br />
+											» <strong>Tướng:</strong> <span class="sold"> 115</span>
+											» <strong>Skin:</strong> <span class="skin"> 550</span>
+											<br />
+											<div class="row mt-2" style="display: flex; justify-content: space-between; align-items: center;">
+												<div class="product-price col-md-4">
+													<span class="old-price" style="text-decoration: line-through; font-size: 0.8em;">6.800.000đ</span><br>
+													<span class="new-price" style="color: red; font-size: 1em;">3.400.000đ</span>
+												</div>
+
+												<a class="col-md-8 text-end" href="/Public/Home/Detail?id=${product.productID}">
+													<button class="btn-view-detail" title="Mua">Xem thông tin</button>
+												</a>
+											</div>
 										</div>
 
-									    <a class="col-md-8 text-end" href="/Public/Home/Detail?id=${product.productID}">
-											<button class="btn-view-detail" title="Mua">Xem thông tin</button>
-										</a>
-									</div>
-								</div>
+										<div class="action-button">
+											<a href="/Public/Home/Detail?id=${product.productID}" title="Xem nhanh" class="btn-circle btn-views">
+												<img class="view_img" width="25" height="25" src="images/icon-sp/eye.svg" alt="Xem nhanh" />
+											</a>
 
-								<div class="action-button">
-				                    <a href="/Public/Home/Detail?id=${product.productID}" title="Xem nhanh" class="btn-circle btn-views">
-										<img class="view_img" width="25" height="25" src="images/icon-sp/eye.svg" alt="Xem nhanh" />
-									</a>
+											<a href="/Public/Home/Detail?id=${product.productID}" class="btn-circle btn-views" title="Hình ảnh chi tiết">
+												<img width="25" height="25" src="images/icon-sp/card-image.svg" alt="Hình ảnh chi tiết" />
+											</a>
 
-									<a href="/Public/Home/Detail?id=${product.productID}" class="btn-circle btn-views" title="Hình ảnh chi tiết">
-										<img width="25" height="25" src="images/icon-sp/card-image.svg" alt="Hình ảnh chi tiết" />
-									</a>
+											<a href="checkout.html?productId=${product.productID}" class="btn-circle btn-views" title="Mua nick tự động">
+												<img width="25" height="25" src="images/icon-sp/cash-coin.svg" alt="Mua nick tự động" />
+											</a>
+										</div>
+									`;
 
-									<a href="checkout.html?productId=${product.productID}" class="btn-circle btn-views" title="Mua nick tự động">
-										<img width="25" height="25" src="images/icon-sp/cash-coin.svg" alt="Mua nick tự động" />
-									</a>
-								</div>
-							`;
 
-				
 				productList.appendChild(productItem);
 			});
 		}
@@ -250,17 +421,9 @@
 			});
 		}
 
-
-		fetchProducts();
+		fetchSubCategory();
 		fetchSliders();
 	
-		
-
-		
-		
-
-
-
 	</script>
 
 </body>

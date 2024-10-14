@@ -1,26 +1,52 @@
-﻿@model WebGameV1.Models.Category
+﻿@model WebGameV1.Models.ViewModel.CategoryVM
 
 <div class="container">
-    <div class="row justify-content-center  min-vh-100">
+    <div class="row justify-content-center min-vh-100">
         <div class="col-md-8 col-lg-6">
             <form method="post" asp-controller="Category" asp-action="Upsert">
                 <div class="border rounded p-4 mt-4 shadow-sm">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
                     <div class="row pb-2 text-center">
-                        <h2>@(Model.CategoryID == 0 ? "Tạo mới" : "Cập nhật") Loại game</h2>
+                        <h2>@(Model.Category.CategoryID == 0 ? "Tạo" : "Cập nhật") Loại trò chơi</h2>
                     </div>
 
-                    <input type="hidden" asp-for="CategoryID" id="categoryId" />
+                    <input type="hidden" asp-for="Category.CategoryID" id="categoryId" />
 
                     <div class="mb-3">
-                        <label asp-for="CategoryName" class="form-label"></label>
-                        <input asp-for="CategoryName" class="form-control" required id="categoryName" />
-                        <span asp-validation-for="CategoryName" class="text-danger" id="cateExistsMessage"></span>
+                        <label asp-for="Category.CategoryName" class="form-label"></label>
+                        <input asp-for="Category.CategoryName" class="form-control" required id="categoryName" />
+                        <span asp-validation-for="Category.CategoryName" class="text-danger" id="cateExistsMessage"></span>
                     </div>
 
+                    <div class="mb-3">
+                        @if (Model.Category.CategoryID > 0)
+                        {
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addSubCategoryModal">Thêm danh mục</button>
+                        }
+                    </div>
+
+                    <!-- Display the list of subcategories -->
+                    @if (Model.SubCategories != null && Model.SubCategories.Any())
+                    {
+                        <h5 class="mt-4">Danh sách danh mục con</h5>
+                        <ul class="list-group">
+                            @foreach (var subCategory in Model.SubCategories)
+                            {
+                                <li class="list-group-item">
+                                    @subCategory.SubCategoryName
+                                    <button type="button" class="btn btn-warning btn-sm float-end" data-bs-toggle="modal" data-bs-target="#editSubCategoryModal" onclick="editSubCategory(@subCategory.SubCategoryID, '@subCategory.SubCategoryName')">Edit</button>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Chưa có danh mục con nào.</p>
+                    }
+
                     <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="bi bi-save"></i> @(Model.CategoryID == 0 ? "Create" : "Update")
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> @(Model.Category.CategoryID == 0 ? "Create" : "Update")
                         </button>
                         <a asp-controller="Category" asp-action="Index" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Back To List
@@ -30,21 +56,78 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal for Adding SubCategory -->
+    <div class="modal fade" id="addSubCategoryModal" tabindex="-1" aria-labelledby="addSubCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSubCategoryModalLabel">Thêm danh mục</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-controller="Category" asp-action="AddSubCategory">
+                        <!-- Bind CategoryID -->
+                        <input type="hidden" name="Category.CategoryID" value="@Model.Category.CategoryID" />
+
+                        <div class="mb-3">
+                            <label for="newSubCategoryName" class="form-label">Danh mục loại tài khoản</label>
+                            <!-- Bind SubCategoryName -->
+                            <input type="text" name="SubCategory.SubCategoryName" id="newSubCategoryName" class="form-control" placeholder="Nhập danh mục" required />
+                            <span asp-validation-for="SubCategory.SubCategoryName" class="text-danger" id="subCateExistsMessage"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Thêm</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+    <!-- Modal for Editing SubCategory -->
+    <div class="modal fade" id="editSubCategoryModal" tabindex="-1" aria-labelledby="editSubCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSubCategoryModalLabel">Chỉnh sửa danh mục</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-controller="Category" asp-action="EditSubCategory">
+                        <input type="hidden" id="editSubCategoryId" name="SubCategoryID" />
+                        <div class="mb-3">
+                            <label for="editSubCategoryName" class="form-label">Tên danh mục</label>
+                            <input type="text" id="editSubCategoryName" name="SubCategoryName" class="form-control" required />
+                            <span asp-validation-for="SubCategory.SubCategoryName" class="text-danger" id="editSubCateExistsMessage"></span> 
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Lưu</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <partial name="_Notification" />
 
     <script>
-        window.onload = function () {
-            var categoryId = document.getElementById("categoryId");
-
-            if (categoryId.value) {
-                categoryId.setAttribute("readonly", "readonly");
-            }
-        };
+   
+        function editSubCategory(subCategoryId, subCategoryName) {
+            $("#editSubCategoryId").val(subCategoryId);
+            $("#editSubCategoryName").val(subCategoryName);
+        }
 
         $(document).ready(function () {
+            // Kiểm tra trùng lặp tên danh mục chính
             $("#categoryName").on('blur', function () {
                 var name = $("#categoryName").val();
                 var id = $("#categoryId").val();
@@ -57,10 +140,10 @@
 
                         if (cateExists) {
                             $("#cateExistsMessage").text("Loại sản phẩm đã tồn tại.").css("color", "red");
-                            $("#submitBtn").prop("disabled", true);
+                            $("button[type='submit']").prop("disabled", true);
                         } else {
                             $("#cateExistsMessage").text("");
-                            $("#submitBtn").prop("disabled", false);
+                            $("button[type='submit']").prop("disabled", false);
                         }
                     },
                     error: function () {
@@ -68,6 +151,59 @@
                     }
                 });
             });
+
+            // Kiểm tra trùng lặp tên danh mục con
+            $("#newSubCategoryName").on('blur', function () {
+                var subCategoryName = $("#newSubCategoryName").val();
+                var id = $("#categoryId").val();
+                $.ajax({
+                    url: '/api/admin/sub-categories',
+                    type: 'GET',
+                    success: function (response) {
+                        var subCateExists = response.data.some(subCate => subCate.subCategoryName.toLowerCase() === subCategoryName.toLowerCase() && subCate.categoryId != id);
+
+                        if (subCateExists) {
+                            $("#subCateExistsMessage").text("Danh mục con đã tồn tại.").css("color", "red");
+                            $("button[type='submit']").prop("disabled", true); // Disable submit button
+                        } else {
+                            $("#subCateExistsMessage").text("");
+                            $("button[type='submit']").prop("disabled", false); // Enable submit button
+                        }
+                    },
+                    error: function () {
+                        $("#subCateExistsMessage").text("Lỗi khi kiểm tra tên danh mục con.").css("color", "red");
+                    }
+                });
+            });
         });
+
+
+        $(document).ready(function () {
+            $("#editSubCategoryName").on('blur', function () {
+                var subCategoryName = $("#editSubCategoryName").val();
+                var subCategoryId = $("#editSubCategoryId").val();
+
+                $.ajax({
+                    url: '/api/admin/sub-categories',
+                    type: 'GET',
+                    success: function (response) {
+                        var subCateExists = response.data.some(subCate =>
+                            subCate.subCategoryName.toLowerCase() === subCategoryName.toLowerCase() && subCate.subCategoryID != subCategoryId);
+
+                        if (subCateExists) {
+                            $("#editSubCateExistsMessage").text("Danh mục con đã tồn tại.").css("color", "red"); // Updated ID used here
+                            $("button[type='submit']").prop("disabled", true);
+                        } else {
+                            $("#editSubCateExistsMessage").text("");
+                            $("button[type='submit']").prop("disabled", false);
+                        }
+                    },
+                    error: function () {
+                        $("#editSubCateExistsMessage").text("Lỗi khi kiểm tra tên danh mục con.").css("color", "red"); // Updated ID used here
+                    }
+                });
+            });
+        });
+
     </script>
 }

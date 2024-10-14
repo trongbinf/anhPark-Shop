@@ -1,0 +1,73 @@
+﻿@model WebGameV1.Models.ViewModel.ProductVM
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Game Shop</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/home.css" />
+</head>
+
+<div class="product-container">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a asp-area="Public" asp-controller="Home" asp-action="Index">Trang chủ</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-area="Public" asp-controller="Home" asp-action="Index">@Model.product.Category.CategoryName</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.sub.SubCategoryName</li>
+        </ol>
+    </nav>
+    <input type="hidden" id="sub-id-1" value="" />
+    <div class="product-list" id="product-list">
+        @if (Model?.Products != null && Model.Products.Any())
+        {
+            foreach (var product in Model.Products)
+            {
+                <div class="product-item">
+                    <div class="product-tag product-tag1">@product.SubCategory?.SubCategoryName</div>
+                    <img src="~/@product.MainImageUrl" alt="@product.ProductTitle" />
+                    <div class="product-title">@product.ProductTitle</div>
+                    <hr class="hr-style" />
+                    <div class="product-info">
+                        <strong>Rank mùa trước:</strong> <span class="rank">Cao thủ</span>
+                        <br />
+                        » <strong>Tướng:</strong> <span class="sold">115</span>
+                        » <strong>Skin:</strong> <span class="skin">550</span>
+                        <br />
+                        <div class="row mt-2" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="product-price col-md-4">
+                                <span class="old-price" style="text-decoration: line-through; font-size: 0.8em;">6.800.000đ</span><br>
+                                <span class="new-price" style="color: red; font-size: 1em;">3.400.000đ</span>
+                            </div>
+
+                            <a class="col-md-8 text-end" href="@Url.Action("Detail", "Home", new { id = product.ProductID })">
+                                <button class="btn-view-detail" title="Mua">Xem thông tin</button>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="action-button">
+                        <a href="/Public/Home/Detail?id=${product.productID}" title="Xem nhanh" class="btn-circle btn-views">
+                            <img class="view_img" width="25" height="25" src="~/images/icon-sp/eye.svg" alt="Xem nhanh" />
+                        </a>
+
+                        <a href="/Public/Home/Detail?id=${product.productID}" class="btn-circle btn-views" title="Hình ảnh chi tiết">
+                            <img width="25" height="25" src="~/images/icon-sp/card-image.svg" alt="Hình ảnh chi tiết" />
+                        </a>
+
+                        <a href="checkout.html?productId=${product.productID}" class="btn-circle btn-views" title="Mua nick tự động">
+                            <img width="25" height="25" src="~/images/icon-sp/cash-coin.svg" alt="Mua nick tự động" />
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Không có sản phẩm nào để hiển thị.</p>
+        }
+    </div>
+</div>

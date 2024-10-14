@@ -10,48 +10,46 @@ using WebGameV1.Models;
 
 namespace WebGameV1.DataAcess.Repository
 {
-	public class ProductRepository:Repository<Product>, IProduct
-	{
-		private readonly ApplicationDBContext _db;
+    public class ProductRepository : Repository<Product>, IProduct
+    {
+        private readonly ApplicationDBContext _db;
 
-		public ProductRepository(ApplicationDBContext db) : base(db)
-		{
-			_db = db;
-		}
+        public ProductRepository(ApplicationDBContext db) : base(db)
+        {
+            _db = db;
+        }
 
-		public void Save()
-		{
-			_db.SaveChanges();
-		}
+        public async Task SaveAsync()
+        {
+            await _db.SaveChangesAsync();
+        }  
 
-		public void Update(Product product)
-		{
-			var objfromDb = _db.Products.FirstOrDefault(a => a.ProductID == product.ProductID);
-			if (objfromDb != null)
-			{
-				objfromDb.ProductTitle = product.ProductTitle;
-				objfromDb.Description = product.Description;			
-				objfromDb.Price = product.Price;
-				objfromDb.Discount = product.Discount;
-				objfromDb.Status = product.Status;
-                objfromDb.Password = product.Password;
-                objfromDb.Username = product.Username;
-				objfromDb.CategoryID = product.CategoryID;
-				objfromDb.UpdateDate = DateOnly.FromDateTime(DateTime.Now);
-				objfromDb.Password = product.Password;
+        public async Task UpdateAsync(Product product)
+        {
+            var objFromDb = await _db.Products.FindAsync(product.ProductID);
+            if (objFromDb != null)
+            {
+              
+                objFromDb.Description = product.Description;
+                objFromDb.Price = product.Price;
+                objFromDb.Discount = product.Discount;
+                objFromDb.Status = product.Status;
+                objFromDb.Username = product.Username;
+                objFromDb.Password = product.Password;
+                objFromDb.CategoryID = product.CategoryID;
+                objFromDb.SubCategory = product.SubCategory;
+                objFromDb.UpdateDate = DateOnly.FromDateTime(DateTime.Now);
 
-				if (objfromDb.MainImageUrl != null)
-				{
-					objfromDb.MainImageUrl = product.MainImageUrl;
-				}
-			
-				if (objfromDb.DetailImageUrl != null)
-				{
-					objfromDb.DetailImageUrl = product.DetailImageUrl;
-				}
-			}
+                if (!string.IsNullOrEmpty(product.MainImageUrl))
+                {
+                    objFromDb.MainImageUrl = product.MainImageUrl;
+                }
 
-			_db.Products.Update(objfromDb);
-		}
-	}
-}
+                if (!string.IsNullOrEmpty(product.DetailImageUrl))
+                {
+                    objFromDb.DetailImageUrl = product.DetailImageUrl;
+                }
+            }
+        }
+     }
+    }

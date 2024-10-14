@@ -13,9 +13,15 @@ namespace WebGameV1.Models.ViewModel
     public class ProductVM
     {
         public Product product { get; set; }
+        public SubCategory sub { get; set; }
+        public IEnumerable<Product> Products { get; set; } = new List<Product>();
 
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
+
+
+        [ValidateNever]
+        public IEnumerable<SelectListItem> SubCategoryList { get; set; }
 
         [NotMapped]
         public IFormFile? MainImage { get; set; }
